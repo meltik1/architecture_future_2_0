@@ -1,0 +1,32 @@
+@startuml
+title FitLife Web Application Component Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+System(AI, "AI сервисы", "Python")
+System(FIntex, "Финтех сервисы", "Python")
+System(Client, "Клиентский интерфейс оператора" )
+
+Container_Boundary(FitLifeSystem, "Cлой для работы с данными") {
+  Container(BIGId, "BigID", "Классификация данных, предупреждает об утечках")
+  Container(Spark, "Apache Spark", "Apache Spark", "Инструмент для распредленных вычислений")
+  Container(S3, "S3 Харанилище", "Amazon S3", "Здесь храним неструктруированные/структурированные данные")
+  ContainerQueue(kafka, "Notification Topic", "Apache kafka", "Async message broker")
+  Container(BI, "Инструмент для BI", "Power BI")
+  ContainerDb(DWH, "Новый DWH", "GreenPulm", "Хранит аналитические данные компании")
+}
+
+Rel(kafka, Spark, "Стриминг данных из Kafka")
+Rel(Spark, DWH, "Структурированные данные кладем в DWH")
+Rel(Spark, S3, "Неструктурированные данные кладем в S3")
+Rel(AI, S3, "Берет неструктуированные данные для обучения моделей")
+Rel(BI, DWH, "Берет данные из ")
+Rel(FIntex, kafka, "Фин тех данные")
+Rel(Client, kafka, "Медицинские данные")
+Rel(Client, S3, "СОхраняем файлы и фотографии")
+Rel(BIGId, S3, "Классифицирует данные, предупреждает проблемы")
+Rel(BIGId, DWH, "Классифицирует данные, предупреждает проблемы")
+
+@enduml
